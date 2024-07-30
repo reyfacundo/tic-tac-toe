@@ -21,7 +21,7 @@ const gameFactory = (name, playerMark, name2, playerMark2) => {
     const { updateBoard, getBoard } = gameboardFactory
 
     const action = (position, mark) => {
-        if ((position >= 0 || position <= 8) && board[position] === null) {
+        if ((position >= 0 || position <= 8) && getBoard()[position] === null) {
             updateBoard(position, mark);
         } else {
             return false
