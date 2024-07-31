@@ -1,7 +1,7 @@
 // const gameboard = {gameboard:[]}
 
 const gameboardFactory = (() => {
-    const board = [null, null, null, null, null, null, null, null, null]; // 9 array positions
+    const board = [null, null, null, null, null, null, null, null, null]; // 8 array positions
     const getBoard = () => board;
     const updateBoard = (index, mark) => {
         board[index] = mark;
