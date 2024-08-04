@@ -170,8 +170,6 @@ const display = (() => {
         let player2Name;
 
         const one = () => {
-            selectedX.classList.add('hide')
-            selectedO.classList.add('hide')
             if (!x.classList.contains('selected') && !o.classList.contains('selected') || playerName.value === '') {
                 document.querySelector('#complete').classList.add('complete');
                 setTimeout(() => {
@@ -180,12 +178,16 @@ const display = (() => {
                 return
             }
             if (x.classList.contains('selected')) {
+                selectedX.classList.add('hide')
+                selectedO.classList.add('hide')
                 player1Mark = 'X';
                 player2Mark = 'O';
                 x.classList.add('hide');
                 o.classList.add('selected2');
                 o.setAttribute('style', 'pointer-events: none;');
             } else {
+                selectedX.classList.add('hide')
+                selectedO.classList.add('hide')
                 player1Mark = 'O';
                 player2Mark = 'X';
                 o.classList.add('hide');
