@@ -13,17 +13,20 @@
 </head>
 
 <body>
-    <!-- <div class="overlay"></div> -->
     <div class="names">
         <div class="container">
             <h2 id="player">PLAYER 1</h2>
             <div class="options">
-                <button id="x" class="passive">X</button>
+                <div class="x_container">
+                    <button id="x" class="passive selected">X</button>
+                    <h3 id="selected_x">SELECTED</h3>
+                </div>
                 <input type="text" placeholder="CHOOSE NAME..." id="name">
-                <button id="o" class="passive">O</button>
+                <div class="o_container">
+                    <button id="o" class="passive">O</button>
+                    <h3 id="selected_o" class="hide">SELECTED</h3>
+                </div>
             </div>
-            <!-- <div class="marks">
-            </div> -->
 
         </div>
         <button id="next">

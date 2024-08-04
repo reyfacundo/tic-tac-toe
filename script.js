@@ -135,26 +135,28 @@ const gameFactory = (name, playerMark, name2, playerMark2) => {
 
 const display = (() => {
     const gameplay = () => {
-        const x = document.querySelector('#x');
-        const o = document.querySelector('#o');
-
-        x.addEventListener('click', e => {
-            if (o.classList.contains('selected')) {
-                o.classList.toggle('selected');
-                x.classList.toggle('selected');
-                return
+        const xButton = document.querySelector('#x');
+        const oButton = document.querySelector('#o');
+        const selectedX = document.querySelector('#selected_x');
+        const selectedO = document.querySelector('#selected_o');
+        
+        xButton.addEventListener('click', () => {
+            if (!xButton.classList.contains('selected')) {
+                xButton.classList.add('selected');
+                oButton.classList.remove('selected');
+                selectedX.classList.remove('hide');
+                selectedO.classList.add('hide');
             }
-            x.classList.toggle('selected')
         });
-        o.addEventListener('click', e => {
-            if (x.classList.contains('selected')) {
-                x.classList.toggle('selected');
-                o.classList.toggle('selected');
-                return
+        
+        oButton.addEventListener('click', () => {
+            if (!oButton.classList.contains('selected')) {
+                oButton.classList.add('selected');
+                xButton.classList.remove('selected');
+                selectedO.classList.remove('hide');
+                selectedX.classList.add('hide');
             }
-            o.classList.toggle('selected');
         });
-
         const next = document.querySelector('#next');
         const playerName = document.querySelector('#name');
         const player = document.querySelector('#player');
@@ -168,6 +170,8 @@ const display = (() => {
         let player2Name;
 
         const one = () => {
+            selectedX.classList.add('hide')
+            selectedO.classList.add('hide')
             if (!x.classList.contains('selected') && !o.classList.contains('selected') || playerName.value === '') {
                 document.querySelector('#complete').classList.add('complete');
                 setTimeout(() => {
