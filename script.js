@@ -1,12 +1,12 @@
-// const gameboard = {gameboard:[]}
 
 const gameboardFactory = (() => {
-    const board = [null, null, null, null, null, null, null, null, null]; // 8 array positions
+    let board = [null, null, null, null, null, null, null, null, null]; // 8 array positions
+    const resetBoard = () => board = [null, null, null, null, null, null, null, null, null];
     const getBoard = () => board;
     const updateBoard = (index, mark) => {
         board[index] = mark;
     }
-    return { getBoard, updateBoard }
+    return { getBoard, updateBoard, resetBoard }
 })();
 
 const playerFactory = (name, mark) => {
@@ -18,7 +18,7 @@ const playerFactory = (name, mark) => {
 const gameFactory = (name, playerMark, name2, playerMark2) => {
     const player1 = playerFactory(name, playerMark);
     const player2 = playerFactory(name2, playerMark2);
-    const { updateBoard, getBoard } = gameboardFactory
+    const { updateBoard, getBoard, resetBoard } = gameboardFactory
 
     const action = (position, mark) => {
         if ((position >= 0 || position <= 8) && getBoard()[position] === null) {
@@ -27,10 +27,6 @@ const gameFactory = (name, playerMark, name2, playerMark2) => {
             return false
         }
     }
-
-    const movePlayer1 = (position) => action(position, player1.getMark());
-
-    const movePlayer2 = (position) => action(position, player2.getMark());
 
     const winConditions = [
         // Horizontal rows
@@ -58,66 +54,182 @@ const gameFactory = (name, playerMark, name2, playerMark2) => {
         } else return false
     }
 
+    const tie = () => {
+        return getBoard().every((e) => e != null);
+    }
 
-    const roundPlay = () => {
-        function tie(){
-            return getBoard().every((e)=> e != null);
+    let player1Turn = true;
+
+    const move = (e) => {
+        let position = +e.target.id
+
+        if (e.target.textContent !== "") return
+
+        if (player1Turn) {
+            action(position, player1.getMark());
+            e.target.textContent = `${player1.getMark()}`
+            e.target.style.color = '#eeba5a';
+            e.target.style.fontSize = '5rem';
+        } else {
+            action(position, player2.getMark());
+            e.target.textContent = `${player2.getMark()}`
+            e.target.style.color = '#59884f';
+            e.target.style.fontSize = '5rem';
         }
 
-        // Player 1
-        while (true) {
-            let position1 = prompt(`${player1.getName()} Select a position from 0 to 8`);
-            while (movePlayer1(position1) === false) {
-                alert("Not a valid position, try again.");
-                position1 = prompt(`${player1.getName()} Select a position from 0 to 8`);
-            }
-            alert(getBoard());
-            if (win(player1.getMark())) {
-                alert(`${player1.getName()} Wins!`)
-                break
-            }
-            if(tie()){
-                alert("It's a tie!");
-                break
-            }
+        let wonTiles;
 
-            // Player 2
-            let position2 = prompt(`${player2.getName()} Select a position from 0 to 8`);
-            while (movePlayer2(position2) === false) {
-                alert("Not a valid position, try again.");
-                position2 = prompt(`${player2.getName()} Select a position from 0 to 8`);
-            }
-            alert(getBoard());
-            if (win(player2.getMark())) {
-                alert(`${player2.getName()} Wins!`)
-                break
-            }
-            if(tie()){
-                alert("It's a tie!");
-                break
-            }
-            console.log(getBoard())
+        const printWonTiles = (playerMark, styles) => {
+            wonTiles = winConditions.find(
+                (condition) => condition.every(
+                    (index) => getBoard()[index] === playerMark
+                )
+            )
+            document.querySelectorAll('.board_tile').forEach(e => {
+                if (e.id.includes(wonTiles[0]) || e.id.includes(wonTiles[1]) || e.id.includes(wonTiles[2])) {
+                    e.classList.add(styles);
+                }
+            })
+        }
+
+        if (win(player1.getMark())) {
+            printWonTiles(player1.getMark(), 'win1');
+            document.querySelectorAll('.board').forEach(e => e.removeEventListener("click", move));
+            setTimeout(() => {
+                document.querySelector('#win').classList.remove('hide');
+            }, 300);
+            const name = player1.getName().toUpperCase();
+            document.querySelector('#winner').textContent = `${name} WINS!`
+        } else if (win(player2.getMark())) {
+            printWonTiles(player2.getMark(), 'win2');
+            document.querySelectorAll('.board').forEach(e => e.removeEventListener("click", move));
+            setTimeout(() => {
+                document.querySelector('#win').classList.remove('hide');
+            }, 300); const name = player2.getName().toUpperCase();
+            document.querySelector('#winner').textContent = `${name} WINS!`
+        } else if (tie()) {
+            setTimeout(() => {
+                document.querySelector('#win').classList.remove('hide');
+            }, 300); document.querySelector('#winner').textContent = `IT'S A TIE!`
+        } else {
+            player1Turn = !player1Turn;
         }
     }
 
+    const restartGame = () => {
+        player1Turn = true;
+        document.querySelectorAll('.board_tile').forEach(el => {
+            el.textContent = ''
+            el.classList.remove('win1');
+            el.classList.remove('win2');
+        });
+        resetBoard();
+        document.querySelector('#win').classList.add('hide');
+        document.querySelectorAll('.board').forEach(e => e.addEventListener("click", move));
+    };
 
-    return { roundPlay }
+    document.querySelectorAll('.board').forEach(e => e.addEventListener("click", move));
+
+    return { restartGame }
 }
 
-const players = () => {
-    const player1test = prompt("Select your name - Player 1");
-    let player1mark = prompt("Select your mark - X or O");
-    while (player1mark != "X" && player1mark != "O" && player1mark != "o" && player1mark != "x") {
-        alert("Please just select either X or O");
-        player1mark = prompt("Select your mark - X or O");
+const display = (() => {
+    const gameplay = () => {
+        const x = document.querySelector('#x');
+        const o = document.querySelector('#o');
+
+        x.addEventListener('click', e => {
+            if (o.classList.contains('selected')) {
+                o.classList.toggle('selected');
+                x.classList.toggle('selected');
+                return
+            }
+            x.classList.toggle('selected')
+        });
+        o.addEventListener('click', e => {
+            if (x.classList.contains('selected')) {
+                x.classList.toggle('selected');
+                o.classList.toggle('selected');
+                return
+            }
+            o.classList.toggle('selected');
+        });
+
+        const next = document.querySelector('#next');
+        const playerName = document.querySelector('#name');
+        const player = document.querySelector('#player');
+        const container = document.querySelector('.container');
+
+
+        let gameInstance;
+        let player1Mark;
+        let player1Name;
+        let player2Mark;
+        let player2Name;
+
+        const one = () => {
+            if (!x.classList.contains('selected') && !o.classList.contains('selected') || playerName.value === '') {
+                document.querySelector('#complete').classList.add('complete');
+                setTimeout(() => {
+                    document.querySelector('#complete').classList.remove('complete');
+                }, 2500);
+                return
+            }
+            if (x.classList.contains('selected')) {
+                player1Mark = 'X';
+                player2Mark = 'O';
+                x.classList.add('hide');
+                o.classList.add('selected2');
+                o.setAttribute('style', 'pointer-events: none;');
+            } else {
+                player1Mark = 'O';
+                player2Mark = 'X';
+                o.classList.add('hide');
+                x.classList.add('selected2');
+                x.setAttribute('style', 'pointer-events: none;');
+            }
+            player1Name = playerName.value
+            container.style.backgroundColor = 'yellow';
+            container.setAttribute('style', 'color: #31344e; background-color: #e75050; box-shadow: 0px 10px 0px 0px #b63333;');
+            next.setAttribute('style', 'color: #d8d8d8; background-color: #455381; box-shadow: 0px 10px 0px 0px #373d74;');
+            playerName.style.backgroundColor = 'darkred';
+            playerName.value = ''
+
+            next.textContent = "START GAME"
+            player.textContent = "PLAYER 2"
+            next.classList.add('start');
+            next.addEventListener('click', one);
+            next.removeEventListener('click', one);
+            next.addEventListener('click', two);
+        }
+        const two = () => {
+            if (playerName.value === ''){
+                document.querySelector('#complete').classList.add('complete');
+                setTimeout(() => {
+                    document.querySelector('#complete').classList.remove('complete');
+                }, 2500);
+                return
+            }
+            document.querySelector('#complete').classList.add('hide');
+            player2Name = playerName.value
+            gameInstance = gameFactory(player1Name, player1Mark, player2Name, player2Mark);
+            document.querySelector('.names').style.display = 'none';
+        }
+        next.addEventListener('click', one);
+        document.querySelector('#replay').addEventListener('click', e => {
+
+            const winElement = document.querySelector('#win');
+            winElement.classList.add('animation');
+
+            setTimeout(() => {
+                gameInstance.restartGame();
+                winElement.classList.remove('animation');
+                winElement.style.opacity = '';
+                winElement.style.height = '';
+            }, 1400);
+        });
     }
-    const player2test = prompt("Select your name - Player 2");
+    return { gameplay }
+})();
 
-
-    if (player1mark === "X" || player1mark === "x") return gameFactory(player1test, "X", player2test, "O");
-    if (player1mark === "O" || player1mark === "o") return gameFactory(player1test, "O", player2test, "X");
-}
-
-
-players().roundPlay()
-
+display.gameplay();

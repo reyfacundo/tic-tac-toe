@@ -1,13 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <title>Document</title>
 </head>
+
 <body>
-    
+    <!-- <div class="overlay"></div> -->
+    <div class="names">
+        <div class="container">
+            <h2 id="player">PLAYER 1</h2>
+            <div class="options">
+                <button id="x" class="passive">X</button>
+                <input type="text" placeholder="CHOOSE NAME..." id="name">
+                <button id="o" class="passive">O</button>
+            </div>
+            <!-- <div class="marks">
+            </div> -->
+
+        </div>
+        <button id="next">
+            NEXT
+        </button>
+    </div>
+    <div class="board">
+        <div class="board_tile" id="0"></div>
+        <div class="board_tile" id="1"></div>
+        <div class="board_tile" id="2"></div>
+        <div class="board_tile" id="3"></div>
+        <div class="board_tile" id="4"></div>
+        <div class="board_tile" id="5"></div>
+        <div class="board_tile" id="6"></div>
+        <div class="board_tile" id="7"></div>
+        <div class="board_tile" id="8"></div>
+    </div>
+    <div id="win" class="hide">
+        <h2 id="winner">PLAYER 1 WINS!</h2>
+        <!-- <button><img src="/refresh_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="refresh-img"></button> -->
+        <button id="replay">PLAY AGAIN</button>
+    </div>
+    <div id="complete">
+        <h2>HOLD ON! MAKE SURE TO FILL EVERYTHING OUT!</h2>
+    </div>
     <script src="script.js"></script>
 </body>
+
 </html>
